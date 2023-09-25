@@ -17,6 +17,14 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+
+  /**
+   * For development when using external images, "cdn.discordapp.com" is used.
+   * Must be commented out in production.
+   */
+  images: {
+    domains: ["cdn.discordapp.com"],
+  },
 };
 
 export default config;
