@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Cell from "~/components/Cell";
 
-const Home = () => {
+const Leaderboard = () => {
   return (
     <>
       <Head>
@@ -51,4 +51,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Leaderboard;
