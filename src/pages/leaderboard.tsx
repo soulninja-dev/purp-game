@@ -1,7 +1,10 @@
 import Head from "next/head";
 import Cell from "~/components/Cell";
+import { api } from "~/utils/api";
 
 const Leaderboard = () => {
+  const { data: actions } = api.actions.getAllActions.useQuery();
+
   return (
     <>
       <Head>
@@ -9,7 +12,7 @@ const Leaderboard = () => {
         <meta name="description" content="p2p creator rewards for farcaster" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="font-inter flex min-h-screen flex-col gap-8 bg-[#0A0A0A] px-5 py-6 text-[#AAAEB3]">
+      <main className="flex min-h-screen flex-col gap-8 bg-[#0A0A0A] px-5 py-6 font-inter text-[#AAAEB3]">
         <div className="text-xl font-medium text-[#AAAEB3]">Leaderboard</div>
         <div>
           <table className="w-full">
