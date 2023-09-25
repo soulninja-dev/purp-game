@@ -1,9 +1,10 @@
 import Head from "next/head";
 import Cell from "~/components/Cell";
+import Navbar from "~/components/Navbar";
 import { api } from "~/utils/api";
 
 const Leaderboard = () => {
-  const { data: actions } = api.actions.getAllActions.useQuery();
+  // const { data: actions } = api.actions.getAllActions.useQuery();
 
   return (
     <>
@@ -50,6 +51,7 @@ const Leaderboard = () => {
           </table>
         </div>
       </main>
+      <Navbar />
     </>
   );
 };
