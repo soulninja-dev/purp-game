@@ -49,7 +49,7 @@ const Cell = ({ username, avatar, rewards, rank }: Props) => {
           width={44}
           height={44}
         />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-gray-100">
           <Image
             src="https://cdn.discordapp.com/attachments/856193656569462824/1155751897869860895/image.png"
             className="h-5 w-5"

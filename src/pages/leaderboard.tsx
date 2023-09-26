@@ -9,15 +9,15 @@ const Leaderboard = () => {
   return (
     <>
       <Head>
-        <title>purp.game - p2p creator rewards for farcaster</title>
+        <title>purp.game - leaderboard</title>
         <meta name="description" content="p2p creator rewards for farcaster" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col gap-8 bg-[#0A0A0A] px-5 py-6 font-inter text-[#AAAEB3]">
-        <div className="text-xl font-medium text-[#AAAEB3]">Leaderboard</div>
+      <main className="flex min-h-screen flex-col gap-8 bg-background px-5 py-6 font-inter text-gray-300">
+        <div className="text-xl font-medium">Leaderboard</div>
         <div>
           <table className="w-full">
-            <tr className="flex gap-2 bg-[#181818] px-3 py-2 text-xs text-[#909499]">
+            <tr className="flex gap-2 bg-gray-900 px-3 py-2 text-xs text-gray-400">
               <th className="font-medium uppercase">Top</th>
               <th className="flex-grow text-left font-medium uppercase">
                 User

@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 
 const Navbar = () => {
   return (
-    <div className="fixed bottom-0 flex w-full justify-around gap-6 bg-[#131315] px-4 py-1 font-medium text-[#76787A]">
+    <div className="fixed bottom-0 flex w-full justify-around gap-6 bg-gray-950 px-4 py-1 font-medium text-gray-500">
       <Item href="/activity" label="Activity" icon={<ActivityIcon />} />
       <Item
         href="/leaderboard"
@@ -30,7 +30,7 @@ const Item = ({ href, icon, label }: ItemProps) => {
     <Link
       href={href}
       className={`flex flex-col items-center px-2 py-1 ${
-        router.pathname === href ? "text-[#8465CB]" : null
+        router.pathname === href ? "text-farcaster-900" : null
       }`}
     >
       {icon}
