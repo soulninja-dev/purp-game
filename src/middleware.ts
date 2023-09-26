@@ -1,7 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  if (!request.nextUrl.pathname.startsWith("/leaderboard"))
+  if (
+    !request.nextUrl.pathname.startsWith("/leaderboard") &&
+    !request.nextUrl.pathname.startsWith("/activity")
+  )
     return NextResponse.redirect(new URL("/leaderboard", request.url));
 
   return NextResponse.next();
