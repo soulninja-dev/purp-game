@@ -23,7 +23,12 @@ const config = {
    * Must be commented out in production.
    */
   images: {
-    domains: ["cdn.discordapp.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
 };
 
