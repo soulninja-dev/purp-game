@@ -60,7 +60,7 @@ const Activity = () => {
               to={item.to}
               action={item.action}
               points={item.points}
-              time={item.time}
+              time={item.time as unknown as number}
             />
           ))}
         </div>
