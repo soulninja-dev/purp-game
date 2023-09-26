@@ -13,7 +13,7 @@ const Activity = () => {
         <meta name="description" content="p2p creator rewards for farcaster" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="bg-background flex min-h-screen flex-col gap-3 px-5 py-6 font-inter text-gray-300">
+      <main className="flex min-h-screen flex-col gap-3 bg-background px-5 py-6 font-inter text-gray-300">
         <div className="text-xl font-medium">Activity</div>
         <div className="relative flex items-center gap-8 border-b border-gray-900">
           <button
@@ -34,7 +34,7 @@ const Activity = () => {
           </button>
           <div
             className={
-              "bg-farcaster-900 absolute bottom-0 h-0.5 transition-all duration-300 ease-in-out " +
+              "absolute bottom-0 h-0.5 bg-farcaster-900 transition-all duration-300 ease-in-out " +
               `${
                 tab === "friends" ? "w-14 translate-x-32" : "w-24 translate-x-0"
               }`
@@ -47,10 +47,21 @@ const Activity = () => {
               "https://cdn.discordapp.com/attachments/856193656569462824/1156226836121002004/image.png?ex=651433a7&is=6512e227&hm=08dc1ef7293cf8a1e41b6cc4c2e6f743a09c01942772a43648ac080b17abebfe&",
               "https://cdn.discordapp.com/attachments/856193656569462824/1156226801849340015/image.png?ex=6514339f&is=6512e21f&hm=63a43f78dd48e3693fa6623cf523bdfb12b945f76a56594b9d5e08abebfecb23&",
             ]}
-            by="You"
+            by="soulninja.eth"
             to="elonmusk"
             action="like"
             points={1}
+            time={(new Date() as unknown as number) - 3600 * 1000}
+          />
+          <ActivityItem
+            avatars={[
+              "https://cdn.discordapp.com/attachments/856193656569462824/1156226836121002004/image.png?ex=651433a7&is=6512e227&hm=08dc1ef7293cf8a1e41b6cc4c2e6f743a09c01942772a43648ac080b17abebfe&",
+              "https://cdn.discordapp.com/attachments/856193656569462824/1156226801849340015/image.png?ex=6514339f&is=6512e21f&hm=63a43f78dd48e3693fa6623cf523bdfb12b945f76a56594b9d5e08abebfecb23&",
+            ]}
+            by="soulninja.eth"
+            to="elonmusk"
+            action="follow"
+            points={5}
             time={(new Date() as unknown as number) - 3600 * 1000}
           />
           <ActivityItem

@@ -5,7 +5,7 @@ interface Props {
   avatars: `https://${string}`[];
   by: string;
   to: string;
-  action: "like" | "recast";
+  action: "like" | "recast" | "follow";
   points: number;
   time: number;
 }
@@ -30,9 +30,18 @@ const ActivityItem = ({ by, to, action, points, avatars, time }: Props) => {
       <div className="col-span-3 flex flex-col gap-1">
         <div className="">
           <span className="font-semibold text-gray-100">{by}</span>{" "}
-          {action === "like" ? "liked " : "recasted "}
-          <span className="font-semibold text-gray-100">{to + "'s"}</span>{" "}
-          tweet.
+          {action === "like"
+            ? "liked "
+            : action === "recast"
+            ? "recasted "
+            : "followed "}
+          {action != "follow" ? (
+            <span className="font-semibold text-gray-100">
+              {to + "'s"} cast.
+            </span>
+          ) : (
+            <span className="font-semibold text-gray-100">{to}!</span>
+          )}
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div>{relativeTimeFrom(time)}</div>
