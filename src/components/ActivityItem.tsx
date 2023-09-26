@@ -35,13 +35,9 @@ const ActivityItem = ({ by, to, action, points, avatars, time }: Props) => {
             : action === "recast"
             ? "recasted "
             : "followed "}
-          {action != "follow" ? (
-            <span className="font-semibold text-gray-100">
-              {to + "'s"} cast.
-            </span>
-          ) : (
-            <span className="font-semibold text-gray-100">{to}!</span>
-          )}
+          <span className="font-semibold text-gray-100">
+            {action != "follow" ? `${to + "'s"} cast.` : `${to}!`}
+          </span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div>{relativeTimeFrom(time)}</div>
