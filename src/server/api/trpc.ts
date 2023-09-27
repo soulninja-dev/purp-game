@@ -7,12 +7,10 @@
  * need to use are documented accordingly near the end.
  */
 
-import { createClient } from "@supabase/supabase-js";
 import { initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { env } from "~/env.mjs";
 
 /**
  * 1. CONTEXT
@@ -35,9 +33,7 @@ type CreateContextOptions = Record<string, never>;
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
-  return {
-    supabase: createClient(env.SUPABASE_URL, env.SUPABASE_KEY),
-  };
+  return {};
 };
 
 /**
