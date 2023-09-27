@@ -1,15 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { createClient } from "@supabase/supabase-js";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { env } from "~/env.mjs";
+import { type Action } from "~/utils/types";
 
 const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 
 export const actionsRouter = createTRPCRouter({
-  getAllActions: publicProcedure.query(async ({ ctx }) => {
+  getAllActions: publicProcedure.query(async () => {
     try {
       const { data, error } = await supabase
         .from("actions")
@@ -18,13 +15,13 @@ export const actionsRouter = createTRPCRouter({
       if (error) {
         throw error;
       }
-      return data.map((item) => ({
+      return data.map((item: Action) => ({
         avatars: [item.senderAvatarUrl, item.recipientAvatarUrl],
         by: item.senderName,
         to: item.recipientName,
         action: item.actionDisplayWording,
         points: item.pointAmount,
-        time: new Date(item.actionTimestamp as unknown as number),
+        time: new Date(item.actionTimestamp) as unknown as number,
       }));
     } catch (err) {
       console.error("Error fetching actions:", err);

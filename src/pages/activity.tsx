@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import Head from "next/head";
-import { type Key, useState } from "react";
-import ActivityItem from "~/components/ActivityItem";
+import { useState } from "react";
+import ActivityItem, { type ActionProps } from "~/components/ActivityItem";
 import DesktopWrapper from "~/components/DesktopWrapper";
 import Navbar from "~/components/Navbar";
 import { api } from "~/utils/api";
@@ -11,9 +8,9 @@ import { api } from "~/utils/api";
 const Activity = () => {
   const [tab, setTab] = useState<"activity" | "friends">("activity");
 
-  const actions = api.actions.getAllActions.useQuery();
+  const { data: actions } = api.actions.getAllActions.useQuery();
 
-  if (!actions.data) {
+  if (!actions) {
     return <div>Loading...</div>;
   }
 
@@ -56,7 +53,7 @@ const Activity = () => {
             ></div>
           </div>
           <div className="flex flex-col gap-4 py-2">
-            {actions.data.map((item, index: Key) => (
+            {actions?.map((item: ActionProps, index: number) => (
               <ActivityItem
                 key={index}
                 avatars={item.avatars}
@@ -64,7 +61,7 @@ const Activity = () => {
                 to={item.to}
                 action={item.action}
                 points={item.points}
-                time={item.time as unknown as number}
+                time={item.time}
               />
             ))}
           </div>
