@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 
 const Navbar = () => {
   return (
-    <div className="fixed bottom-0 flex w-full justify-around gap-6 bg-gray-950 px-4 py-1 font-medium text-gray-500">
+    <div className="fixed bottom-0 flex w-full max-w-sm justify-around gap-6 bg-gray-950 px-4 py-1 font-medium text-gray-500">
       <Item href="/activity" label="Activity" icon={<ActivityIcon />} />
       <Item
         href="/leaderboard"
