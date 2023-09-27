@@ -2,11 +2,8 @@ import Head from "next/head";
 import Cell from "~/components/Cell";
 import DesktopWrapper from "~/components/DesktopWrapper";
 import Navbar from "~/components/Navbar";
-import { api } from "~/utils/api";
 
 const Leaderboard = () => {
-  // const { data: actions } = api.actions.getAllActions.useQuery();
-
   return (
     <>
       <Head>

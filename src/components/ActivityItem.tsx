@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { relativeTimeFrom } from "~/utils/utils";
 
-interface Props {
+export interface ActionProps {
   avatars: `https://${string}`[];
   by: string;
   to: string;
@@ -10,7 +10,14 @@ interface Props {
   time: number;
 }
 
-const ActivityItem = ({ by, to, action, points, avatars, time }: Props) => {
+const ActivityItem = ({
+  by,
+  to,
+  action,
+  points,
+  avatars,
+  time,
+}: ActionProps) => {
   return (
     <div className="grid grid-cols-4 gap-2 text-gray-300">
       <div className="flex">
