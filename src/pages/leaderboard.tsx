@@ -1,9 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import Head from "next/head";
-import Cell from "~/components/Cell";
+import Cell, { CellProp } from "~/components/Cell";
 import DesktopWrapper from "~/components/DesktopWrapper";
 import Navbar from "~/components/Navbar";
+import { api } from "~/utils/api";
 
 const Leaderboard = () => {
+  const { data: leaderboard } = api.actions.getLeaderboard.useQuery();
+
+  console.log(leaderboard);
+
   return (
     <>
       <Head>
@@ -23,30 +31,41 @@ const Leaderboard = () => {
                 </th>
                 <th className="font-medium uppercase">Rewards</th>
               </tr>
-              <Cell
-                username="elonmusk"
-                rank={1}
-                rewards={20}
-                avatar="https://cdn.discordapp.com/attachments/856193656569462824/1155753722161397770/image.png"
-              />
-              <Cell
-                username="corbinpage"
-                rank={2}
-                rewards={17}
-                avatar="https://cdn.discordapp.com/attachments/856193656569462824/1155753722371117116/image.png"
-              />
-              <Cell
-                username="joelintonnn"
-                rank={3}
-                rewards={15}
-                avatar="https://cdn.discordapp.com/attachments/856193656569462824/1155753722597613578/image.png"
-              />
-              <Cell
-                username="dantheman"
-                rank={4}
-                rewards={14}
-                avatar="https://cdn.discordapp.com/attachments/856193656569462824/1155756988387561472/image.png"
-              />
+              {!leaderboard ? (
+                <div className="flex h-[calc(100vh-172.8px)] items-center justify-center">
+                  <svg
+                    className="-ml-1 mr-3 h-5 w-5 animate-spin"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4 py-2">
+                  {leaderboard.map((item: CellProp, index: number) => (
+                    <Cell
+                      key={index}
+                      name={item.name}
+                      rank={item.rank}
+                      points={item.points}
+                      avatar={item.avatar}
+                    />
+                  ))}
+                </div>
+              )}
             </table>
           </div>
         </main>
@@ -55,5 +74,4 @@ const Leaderboard = () => {
     </>
   );
 };
-
 export default Leaderboard;

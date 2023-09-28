@@ -1,7 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@supabase/supabase-js";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { env } from "~/env.mjs";
-import { type Action } from "~/utils/types";
+import { type LBUser, type Action } from "~/utils/types";
 
 const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 
@@ -12,6 +17,7 @@ export const actionsRouter = createTRPCRouter({
         .from("actions")
         .select("*")
         .order("actionTimestamp", { ascending: false });
+
       if (error) {
         throw error;
       }
@@ -25,6 +31,32 @@ export const actionsRouter = createTRPCRouter({
       }));
     } catch (err) {
       console.error("Error fetching actions:", err);
+      return null;
+    }
+  }),
+
+  getLeaderboard: publicProcedure.query(async () => {
+    try {
+      const p_start_day = "2023-01-01";
+      const p_end_day = "2023-12-31";
+
+      const { data, error } = await supabase.rpc("calc_patron_leaderboard", {
+        p_start_day,
+        p_end_day,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return data.map((item: LBUser, index: number) => ({
+        name: item.username,
+        rank: index + 1,
+        points: item.points,
+        avatar: item.useravatarurl,
+      }));
+    } catch (err) {
+      console.error("Error fetching leaderboard: ", err);
       return null;
     }
   }),
@@ -63,5 +95,28 @@ data we get:
     action: "liked a cast by",
     point: pointAmount,
     time: actionTimestamp
+  }]
+
+
+  ---
+
+
+  data we get:
+  [{
+    username: 'corbin.eth',
+    userfid: 358,
+    userdisplayname: 'Corbin Page',
+    useravatarurl: 'https://res.cloudinary.com/merkle-manufactory/image/fetch/c_fill,f_png,w_256/https://lh3.googleusercontent.com/szIk2U62Zfaux7eK8tinvy9vCUz2EPDUYet8WDKN9_dCJmm2-JM8Fux7_Cy2ZWzE9h2g3dIL9j_ywn8iK_UZYB0sToZ1dcP0QBsmh2w',
+    points: 191,
+    usdcamount: 0,
+    userUrl: 'https://warpcast.com/corbin.eth'
+  }]
+
+  data we want:
+  [{
+    name,
+    rank,
+    points,
+    avatar
   }]
 */

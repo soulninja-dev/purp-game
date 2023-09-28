@@ -1,13 +1,13 @@
 import Image from "next/image";
 
-interface Props {
-  username: string;
+export interface CellProp {
+  name: string;
   avatar: string;
-  rewards: number;
+  points: number;
   rank: number;
 }
 
-const Cell = ({ username, avatar, rewards, rank }: Props) => {
+const Cell = ({ name, avatar, points, rank }: CellProp) => {
   const medals = [
     <td className="pl-3" key="gold">
       <Image
@@ -57,10 +57,10 @@ const Cell = ({ username, avatar, rewards, rank }: Props) => {
             width={20}
             height={20}
           />
-          {username}
+          {name}
         </div>
       </td>
-      <td className="whitespace-nowrap px-3">🟣{rewards}</td>
+      <td className="whitespace-nowrap px-3">🟣{points}</td>
     </tr>
   );
 };

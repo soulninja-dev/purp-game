@@ -7,3 +7,13 @@ export type Action = {
   pointAmount: number;
   actionTimestamp: number;
 };
+
+export type LBUser = {
+  username: string;
+  userfid: number;
+  userdisplayname: string;
+  useravatarurl: `https://${string}`;
+  points: number;
+  usdcamount: number;
+  userUrl: `https://${string}`;
+};
