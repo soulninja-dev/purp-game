@@ -9,10 +9,10 @@ import Navbar from "~/components/Navbar";
 import { api } from "~/utils/api";
 
 const Leaderboard = () => {
-  const [tab, setTab] = useState<"patron" | "new_user" | "earner">("patron");
+  const [tab, setTab] = useState<"patron" | "new_user" | "recipient">("patron");
 
   const { data: leaderboard } = api.actions.getLeaderboard.useQuery({
-    lb_type: "patron",
+    lb_type: tab,
   });
   console.log(leaderboard);
 
@@ -26,6 +26,7 @@ const Leaderboard = () => {
       <DesktopWrapper>
         <main className="flex min-h-screen flex-col gap-8 bg-background px-5 py-6 font-inter text-gray-300">
           <div className="text-xl font-medium">Leaderboard</div>
+          {/* the tab switcher */}
           <div className="relative flex items-center gap-10 border-b border-gray-900">
             <button
               onClick={() => setTab("patron")}
@@ -44,9 +45,9 @@ const Leaderboard = () => {
               New Users
             </button>
             <button
-              onClick={() => setTab("earner")}
+              onClick={() => setTab("recipient")}
               className={`${
-                tab === "earner" ? "text-farcaster-900" : null
+                tab === "recipient" ? "text-farcaster-900" : null
               } py-1`}
             >
               Earners
@@ -55,7 +56,7 @@ const Leaderboard = () => {
               className={
                 "absolute bottom-0 h-0.5 bg-farcaster-900 transition-all duration-300 ease-in-out " +
                 `${
-                  tab === "earner"
+                  tab === "recipient"
                     ? "w-20 translate-x-52"
                     : tab === "new_user"
                     ? "w-28 translate-x-20"
@@ -65,6 +66,7 @@ const Leaderboard = () => {
               }
             ></div>
           </div>
+
           <div>
             <table className="w-full">
               <tr className="flex gap-2 bg-gray-900 px-3 py-2 text-xs text-gray-400">

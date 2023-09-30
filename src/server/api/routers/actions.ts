@@ -10,7 +10,7 @@ import { type LBUser, type Action } from "~/utils/types";
 import { z } from "zod";
 
 const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
-const LeaderboardType = z.enum(["patron", "earner", "new_user"]);
+const LeaderboardType = z.enum(["patron", "recipient", "new_user"]);
 
 export const actionsRouter = createTRPCRouter({
   getAllActions: publicProcedure.query(async () => {
@@ -47,10 +47,12 @@ export const actionsRouter = createTRPCRouter({
         const p_end_day = `${currentYear}-12-31`;
         const calctype = `calc_${input.lb_type}_leaderboard`;
 
-        const { data, error } = await supabase.rpc(calctype, {
-          p_start_day,
-          p_end_day,
-        });
+        const { data, error } = await supabase
+          .rpc(calctype, {
+            p_start_day,
+            p_end_day,
+          })
+          .order("points", { ascending: false });
 
         if (error) {
           throw error;
