@@ -44,7 +44,7 @@ const ActivityItem = ({
           <div>{relativeTimeFrom(time)}</div>
           <div className="h-[3px] w-[3px] rounded-full bg-[#D9D9D9]"></div>
           <div>
-            🟣{points} point{`${points > 1 ? "s" : ""}`}
+            🟣 {points} point{`${points > 1 ? "s" : ""}`}
           </div>
         </div>
       </div>

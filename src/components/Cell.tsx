@@ -60,7 +60,7 @@ const Cell = ({ name, avatar, points, rank }: CellProp) => {
           {name}
         </div>
       </td>
-      <td className="whitespace-nowrap px-3">🟣{points}</td>
+      <td className="whitespace-nowrap px-3">{points} 🟣</td>
     </tr>
   );
 };
