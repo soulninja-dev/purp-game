@@ -2,14 +2,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import Head from "next/head";
-import Cell, { CellProp } from "~/components/Cell";
+import { useState } from "react";
+import Cell, { type CellProp } from "~/components/Cell";
 import DesktopWrapper from "~/components/DesktopWrapper";
 import Navbar from "~/components/Navbar";
 import { api } from "~/utils/api";
 
 const Leaderboard = () => {
-  const { data: leaderboard } = api.actions.getLeaderboard.useQuery();
+  const [tab, setTab] = useState<"patron" | "new_user" | "earner">("patron");
 
+  const { data: leaderboard } = api.actions.getLeaderboard.useQuery({
+    lb_type: "patron",
+  });
   console.log(leaderboard);
 
   return (
@@ -22,6 +26,45 @@ const Leaderboard = () => {
       <DesktopWrapper>
         <main className="flex min-h-screen flex-col gap-8 bg-background px-5 py-6 font-inter text-gray-300">
           <div className="text-xl font-medium">Leaderboard</div>
+          <div className="relative flex items-center gap-10 border-b border-gray-900">
+            <button
+              onClick={() => setTab("patron")}
+              className={`${
+                tab === "patron" ? "text-farcaster-900" : null
+              } py-1`}
+            >
+              Patrons
+            </button>
+            <button
+              onClick={() => setTab("new_user")}
+              className={`${
+                tab === "new_user" ? "text-farcaster-900" : null
+              } py-1`}
+            >
+              New Users
+            </button>
+            <button
+              onClick={() => setTab("earner")}
+              className={`${
+                tab === "earner" ? "text-farcaster-900" : null
+              } py-1`}
+            >
+              Earners
+            </button>
+            <div
+              className={
+                "absolute bottom-0 h-0.5 bg-farcaster-900 transition-all duration-300 ease-in-out " +
+                `${
+                  tab === "earner"
+                    ? "w-20 translate-x-52"
+                    : tab === "new_user"
+                    ? "w-28 translate-x-20"
+                    : "w-16 translate-x-0"
+                }
+                }`
+              }
+            ></div>
+          </div>
           <div>
             <table className="w-full">
               <tr className="flex gap-2 bg-gray-900 px-3 py-2 text-xs text-gray-400">

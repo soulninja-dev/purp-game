@@ -7,8 +7,10 @@ import { createClient } from "@supabase/supabase-js";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { env } from "~/env.mjs";
 import { type LBUser, type Action } from "~/utils/types";
+import { z } from "zod";
 
 const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
+const LeaderboardType = z.enum(["patron", "earner", "new_user"]);
 
 export const actionsRouter = createTRPCRouter({
   getAllActions: publicProcedure.query(async () => {
@@ -35,31 +37,36 @@ export const actionsRouter = createTRPCRouter({
     }
   }),
 
-  getLeaderboard: publicProcedure.query(async () => {
-    try {
-      const p_start_day = "2023-01-01";
-      const p_end_day = "2023-12-31";
+  getLeaderboard: publicProcedure
+    .input(z.object({ lb_type: LeaderboardType }))
+    .query(async ({ input }) => {
+      try {
+        const currentYear = new Date().getFullYear();
 
-      const { data, error } = await supabase.rpc("calc_patron_leaderboard", {
-        p_start_day,
-        p_end_day,
-      });
+        const p_start_day = `${currentYear}-01-01`;
+        const p_end_day = `${currentYear}-12-31`;
+        const calctype = `calc_${input.lb_type}_leaderboard`;
 
-      if (error) {
-        throw error;
+        const { data, error } = await supabase.rpc(calctype, {
+          p_start_day,
+          p_end_day,
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        return data.map((item: LBUser, index: number) => ({
+          name: item.username,
+          rank: index + 1,
+          points: item.points,
+          avatar: item.useravatarurl,
+        }));
+      } catch (err) {
+        console.error("Error fetching leaderboard: ", err);
+        return null;
       }
-
-      return data.map((item: LBUser, index: number) => ({
-        name: item.username,
-        rank: index + 1,
-        points: item.points,
-        avatar: item.useravatarurl,
-      }));
-    } catch (err) {
-      console.error("Error fetching leaderboard: ", err);
-      return null;
-    }
-  }),
+    }),
 });
 
 /*
@@ -101,7 +108,7 @@ data we get:
   ---
 
 
-  data we get:
+  data we 
   [{
     username: 'corbin.eth',
     userfid: 358,
