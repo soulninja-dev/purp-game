@@ -41,10 +41,11 @@ export const actionsRouter = createTRPCRouter({
     .input(z.object({ lb_type: LeaderboardType }))
     .query(async ({ input }) => {
       try {
-        const currentYear = new Date().getFullYear();
+        const currentDate = new Date();
+        const p_end_day = currentDate.toISOString().split("T")[0];
+        currentDate.setDate(currentDate.getDate() - 6);
+        const p_start_day = currentDate.toISOString().split("T")[0];
 
-        const p_start_day = `${currentYear}-01-01`;
-        const p_end_day = `${currentYear}-12-31`;
         const calctype = `calc_${input.lb_type}_leaderboard`;
 
         const { data, error } = await supabase
