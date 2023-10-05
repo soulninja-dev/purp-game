@@ -1,12 +1,12 @@
 import Head from "next/head";
-import { useState } from "react";
+// import { useState } from "react";
 import ActivityItem, { type ActionProps } from "~/components/ActivityItem";
 import DesktopWrapper from "~/components/DesktopWrapper";
 import Navbar from "~/components/Navbar";
 import { api } from "~/utils/api";
 
 const Activity = () => {
-  const [tab, setTab] = useState<"activity" | "friends">("activity");
+  // const [tab, setTab] = useState<"activity" | "friends">("activity");
 
   const { data: actions } = api.actions.getAllActions.useQuery();
 
@@ -19,15 +19,15 @@ const Activity = () => {
       </Head>
       <DesktopWrapper>
         <main className="flex min-h-screen flex-col gap-3 bg-background px-5 py-6 font-inter text-gray-300">
-          <div className="text-xl font-medium">Activity</div>
-          <div className="relative flex items-center gap-8 border-b border-gray-900">
+          <div className="text-xl font-medium">All Activity</div>
+          {/* <div className="relative flex items-center gap-8 border-b border-gray-900">
             <button
               onClick={() => setTab("activity")}
               className={`${
                 tab === "activity" ? "text-farcaster-900" : null
               } py-1`}
             >
-              Your Activity
+              All Activity
             </button>
             <button
               onClick={() => setTab("friends")}
@@ -47,7 +47,7 @@ const Activity = () => {
                 }`
               }
             ></div>
-          </div>
+          </div> */}
           {!actions ? (
             <div className="flex h-[calc(100vh-172.8px)] items-center justify-center">
               <svg
