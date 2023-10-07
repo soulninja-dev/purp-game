@@ -10,7 +10,10 @@ import { api } from "~/utils/api";
 const Leaderboard = () => {
   const [tab, setTab] = useState<"patron" | "new_user" | "recipient">("patron");
 
-  const { data: leaderboard }: { data?: CellProp[] } =
+  const {
+    data: leaderboard,
+    refetch,
+  }: { data?: CellProp[]; refetch: () => Promise<unknown> } =
     api.actions.getLeaderboard.useQuery({
       lb_type: tab,
     });
@@ -24,7 +27,8 @@ const Leaderboard = () => {
       </Head>
       <PullToRefresh
         onRefresh={async () => {
-          return true;
+          await refetch();
+          return;
         }}
         backgroundColor="#0A0A0A"
         refreshingContent={<Spinner />}
