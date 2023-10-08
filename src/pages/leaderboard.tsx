@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useState } from "react";
 import PullToRefresh from "react-simple-pull-to-refresh";
-import Cell, { type CellProp } from "~/components/Cell";
+import Cell from "~/components/Cell";
 import DesktopWrapper from "~/components/DesktopWrapper";
 import Navbar from "~/components/Navbar";
 import Spinner from "~/components/Spinner";
@@ -10,13 +10,9 @@ import { api } from "~/utils/api";
 const Leaderboard = () => {
   const [tab, setTab] = useState<"patron" | "new_user" | "recipient">("patron");
 
-  const {
-    data: leaderboard,
-    refetch,
-  }: { data?: CellProp[]; refetch: () => Promise<unknown> } =
-    api.actions.getLeaderboard.useQuery({
-      lb_type: tab,
-    });
+  const { data: leaderboard, refetch } = api.actions.getLeaderboard.useQuery({
+    lb_type: tab,
+  });
 
   return (
     <>
