@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@supabase/supabase-js";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { env } from "~/env.mjs";
@@ -48,23 +43,31 @@ export const actionsRouter = createTRPCRouter({
 
         const calctype = `calc_${input.lb_type}_leaderboard`;
 
-        const { data, error } = await supabase
+        const { data, error } = (await supabase
           .rpc(calctype, {
             p_start_day,
             p_end_day,
           })
-          .order("points", { ascending: false });
+          .order("points", { ascending: false })) as {
+          data: LBUser[] | null;
+          error: unknown;
+        };
 
         if (error) {
           throw error;
         }
 
-        return data.map((item: LBUser, index: number) => ({
+        return data?.map((item, index) => ({
           name: item.username,
           rank: index + 1,
           points: item.points,
           avatar: item.useravatarurl,
-        }));
+        })) as {
+          name: string;
+          rank: number;
+          points: number;
+          avatar: string;
+        }[];
       } catch (err) {
         console.error("Error fetching leaderboard: ", err);
         return null;
