@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import ActivityIcon from "./icons/Activity";
 import LeaderboardIcon from "./icons/Leaderboard";
+import UserIcon from "./icons/User";
 import type { ReactNode } from "react";
 
 const Navbar = () => {
@@ -13,6 +14,7 @@ const Navbar = () => {
         label="Leaderboard"
         icon={<LeaderboardIcon />}
       />
+      <Item href="/profile" label="Profile" icon={<UserIcon />} />
     </div>
   );
 };
