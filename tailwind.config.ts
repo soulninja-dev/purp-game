@@ -20,6 +20,7 @@ export default {
         },
         farcaster: {
           900: "#8465CB",
+          500: "#BBA9E2"
         },
         background: "#0A0A0A",
       },
