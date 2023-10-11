@@ -5,6 +5,7 @@ import Image from "next/image";
 import UploadIcon from "~/components/icons/Upload";
 import DownloadIcon from "~/components/icons/Download";
 import CopyIcon from "~/components/icons/Copy";
+import type { GetServerSideProps } from "next";
 
 const Profile = () => {
   return (
@@ -49,11 +50,11 @@ const Profile = () => {
               <CopyIcon />
             </div>
             <div className="flex w-full justify-between gap-2">
-              <button className="text-farcaster-500 flex w-full items-center justify-center gap-1 rounded-lg bg-[#2A2042] p-2">
+              <button className="flex w-full items-center justify-center gap-1 rounded-lg bg-[#2A2042] p-2 text-farcaster-500">
                 <UploadIcon />
                 Send
               </button>
-              <button className="text-farcaster-500 flex w-full items-center justify-center gap-1 rounded-lg bg-[#2A2042] p-2">
+              <button className="flex w-full items-center justify-center gap-1 rounded-lg bg-[#2A2042] p-2 text-farcaster-500">
                 <DownloadIcon />
                 Move to Bank
               </button>
@@ -87,3 +88,12 @@ const Profile = () => {
 };
 
 export default Profile;
+
+// weird unfixable ts error
+// eslint-disable-next-line @typescript-eslint/require-await
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    redirect: { destination: "/leaderboard", permanent: false },
+    props: {},
+  };
+};
