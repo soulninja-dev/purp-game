@@ -16,6 +16,7 @@ export default {
           500: "#76787A",
           400: "#909499",
           300: "#AAAEB3",
+          200: "#C4C8CC",
           100: "#E1E3E6",
         },
         farcaster: {
