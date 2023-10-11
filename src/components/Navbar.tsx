@@ -14,7 +14,7 @@ const Navbar = () => {
         label="Leaderboard"
         icon={<LeaderboardIcon />}
       />
-      <Item href="/profile" label="Profile" icon={<UserIcon />} />
+      {false && <Item href="/profile" label="Profile" icon={<UserIcon />} />}
     </div>
   );
 };
