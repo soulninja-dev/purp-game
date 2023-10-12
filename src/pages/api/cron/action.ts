@@ -3,6 +3,7 @@ import { getActionsAndCalculate } from "~/utils/getActionsAndCalculate";
 
 export const config = {
   runtime: "edge",
+  unstable_allowDynamic: ["/node_modules/lodash/**"],
 };
 
 export default async function handler(
