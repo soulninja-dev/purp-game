@@ -25,13 +25,9 @@ export async function getActionsAndCalculate() {
 
   const dailyUsdcAmt = 0.33;
 
-  console.log(fnames);
-
   for (const fname of fnames) {
     try {
       const neynarResponse = await getRecentReactionsfromFC(fname, date);
-
-      console.log(neynarResponse);
 
       const actionsData: any[] = _.get(
         neynarResponse,
