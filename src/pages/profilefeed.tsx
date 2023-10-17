@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/require-await */
 import Head from "next/head";
 import DesktopWrapper from "~/components/DesktopWrapper";
 import Navbar from "~/components/Navbar";
 import Image from "next/image";
-// import UploadIcon from "~/components/icons/Upload";
-// import DownloadIcon from "~/components/icons/Download";
-// import CopyIcon from "~/components/icons/Copy";
 import type { GetServerSideProps } from "next";
 
 const Profile = () => {
