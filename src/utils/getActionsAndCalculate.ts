@@ -8,7 +8,7 @@ import { createClient } from "@supabase/supabase-js";
 import { fnames } from "./fnames";
 const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 import { env } from "~/env.mjs";
-import { LBUser } from "./types";
+import type { LBUser } from "./types";
 
 export async function getActionsAndCalculate() {
   const date = new Date().toISOString().slice(0, 10);
@@ -90,7 +90,9 @@ async function getRecentReactionsfromFC(
   }
 }
 
-export async function getUserAddress(fid: string): Promise<any> {
+export async function getUserAddress(
+  fid: string,
+): Promise<{ users: { accountAddress: string }[] }> {
   const endpoint = `https://paymagicapi.com/v1/resolver`;
 
   const headers = {
@@ -145,7 +147,12 @@ const calculatePoints = async (fname: string, type: string) => {
   return { points, error: null };
 };
 
-export async function getUserData(fid: string): Promise<any> {
+export async function getUserData(fid: string): Promise<{
+  name: string;
+  avatarUrl: string;
+  pointsSent: number;
+  pointsEarned: number;
+}> {
   try {
     const { data, error } = await supabase
       .from("actions")
