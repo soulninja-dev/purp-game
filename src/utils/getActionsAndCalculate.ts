@@ -3,6 +3,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+// TODO: @soulninja-dev - remove lodash
+// TODO: @pybash1       - fix types
+
 import _ from "lodash";
 import { createClient } from "@supabase/supabase-js";
 import { fnames } from "./fnames";
