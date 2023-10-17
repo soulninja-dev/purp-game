@@ -1,4 +1,4 @@
-import { type NextApiRequest, type NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import { getActionsAndCalculate } from "~/utils/getActionsAndCalculate";
 
 export const config = {
@@ -6,10 +6,11 @@ export const config = {
   unstable_allowDynamic: ["/node_modules/lodash/**"],
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  await getActionsAndCalculate();
-  res.send({ status: "ok" });
+export default async function handler() {
+  try {
+    await getActionsAndCalculate();
+    return new NextResponse("success", { status: 200 });
+  } catch (err) {
+    return new NextResponse("failure", { status: 500 });
+  }
 }
