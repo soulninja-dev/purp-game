@@ -11,6 +11,5 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   await getActionsAndCalculate();
-
-  res.status(200);
+  res.send({ status: "ok" });
 }
