@@ -2,54 +2,54 @@ import Head from "next/head";
 import DesktopWrapper from "~/components/DesktopWrapper";
 import Navbar from "~/components/Navbar";
 import Image from "next/image";
-import type { GetServerSideProps } from "next";
-import { useState } from "react";
-import Cast from "~/components/Cast";
+import type { GetServerSideProps, NextPage } from "next";
 import UploadIcon from "~/components/icons/Upload";
 import DownloadIcon from "~/components/icons/Download";
 import CopyIcon from "~/components/icons/Copy";
 import { getUserAddress, getUserData } from "~/utils/getActionsAndCalculate";
 import { useRouter } from "next/router";
 import { fnames } from "~/utils/fnames";
+import type { MouseEventHandler } from "react";
 
-const Profile = ({
-  address,
-  avatarUrl,
-  name,
-  fname,
-  pointsSent,
-  pointsEarned,
-}: {
-  notFound: boolean;
+interface Props {
   address: string;
   avatarUrl: string;
   name: string;
   fname: string;
   pointsSent: number;
   pointsEarned: number;
+}
+
+const Profile: NextPage<Props> = ({
+  address,
+  avatarUrl,
+  name,
+  fname,
+  pointsSent,
+  pointsEarned,
 }) => {
-  const [tab, setTab] = useState<"recasts" | "likes">("recasts");
   const router = useRouter();
 
   const formatAddress = (address: string) =>
     address && address.length >= 10
       ? `${address.slice(0, 6)}....${address.slice(-5)}`
       : address;
-  const copyToClipboard: React.MouseEventHandler<HTMLDivElement> = (e) => {
+
+  const copyToClipboard: MouseEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
     navigator.clipboard
       .writeText(address)
       .then(() => {
-        console.log("done");
+        //
       })
       .catch(() => {
-        console.log("couldnt copy to clipboard");
+        //
       });
   };
   return (
     <>
       <Head>
-        <title>purp.game - profile</title>
+        <title>purp.game - {fname}</title>
         <meta name="description" content="p2p creator rewards for farcaster" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -57,11 +57,11 @@ const Profile = ({
         <main className="flex min-h-screen flex-col gap-8 bg-background px-5 py-6 font-inter text-gray-300">
           <button
             onClick={() => router.back()}
-            className="text-left text-xl font-medium text-gray-50"
+            className="text-left text-xl font-medium text-gray-300"
           >
-            &larr;
+            Profile
           </button>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 items-center">
             <Image
               src={avatarUrl}
               className="h-[76px] w-[76px] rounded-full"
@@ -77,9 +77,9 @@ const Profile = ({
                 width={20}
                 height={20}
               />
-              {name}
+              {fname}
             </div>
-            <div className="text-gray-600">{fname}</div>
+            <div className="text-gray-600">{name}</div>
           </div>
           <div className="flex flex-col items-center gap-7 rounded-2xl border-[0.5px] border-gray-800 bg-gray-950 px-4 py-6 text-center">
             <div className="flex flex-col gap-3">
@@ -123,69 +123,6 @@ const Profile = ({
               <div className="text-gray-600">🟣 {pointsSent}</div>
             </div>
           </div>
-          <div className="relative flex items-center gap-10 border-b border-gray-900 ">
-            <button
-              onClick={() => setTab("recasts")}
-              className={`${
-                tab === "recasts" ? "text-farcaster-900" : null
-              } py-1 pl-0.5`}
-            >
-              Recasts
-            </button>
-            <button
-              onClick={() => setTab("likes")}
-              className={`${
-                tab === "likes" ? "text-farcaster-900" : null
-              } py-1`}
-            >
-              Likes
-            </button>
-            <div
-              className={
-                "absolute bottom-0 h-0.5 bg-farcaster-900 transition-all duration-300 ease-in-out " +
-                `${
-                  tab === "likes" ? "w-12 translate-x-24" : "w-16 translate-x-0"
-                }
-                }`
-              }
-            ></div>
-          </div>
-          <div>
-            <Cast
-              user={{
-                useravatarurl:
-                  "https://cdn.discordapp.com/attachments/856193656569462824/1162699116040700005/image.png?ex=653ce2ef&is=652a6def&hm=fb4bab56adf7c172325beb45b23d6e9212ed05b93119033dc09c2f9da37fe6c9&",
-                userdisplayname: "Leto Page",
-                username: "letopage",
-              }}
-              post={{
-                content:
-                  "Excited for the Web3 conference in San Fransisco this year and I'll be speaking this yearrrr🤩",
-                likes: 3,
-                recasts: 3,
-                comments: 4,
-              }}
-              first
-            />
-            <Cast
-              user={{
-                useravatarurl:
-                  "https://cdn.discordapp.com/attachments/856193656569462824/1162699151839080528/image.png?ex=653ce2f7&is=652a6df7&hm=5ff148d231d6fd1facb8cd172a437267bccb7816c8482855547197638f14bd3d&",
-                userdisplayname: "Joe Cadiz",
-                username: "joecadiz",
-              }}
-              post={{
-                content:
-                  "We are really excited about this project and we can't wait to see how it impacts the web3 space 🤩",
-                attachments: [
-                  "https://cdn.discordapp.com/attachments/856193656569462824/1162699286107131954/image.png?ex=653ce317&is=652a6e17&hm=e2c6a1f1a34971f551744bf35bed99abd5a687f84ae70371e95e6423cade6f99&",
-                ],
-                likes: 3,
-                recasts: 3,
-                comments: 1,
-              }}
-            />
-          </div>
         </main>
         <Navbar />
       </DesktopWrapper>
@@ -203,20 +140,19 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   // get user address
   try {
-    const {
-      users: [{ accountAddress: address }],
-    } = await getUserAddress(fname as string);
+    const { users } = await getUserAddress(fname as string);
 
     // get user data
     const { name, avatarUrl, pointsSent, pointsEarned } = await getUserData(
       fname as string,
     );
 
-    if (!name || !avatarUrl || !address) return { props: {}, notFound: true };
+    if (!name || !avatarUrl || !users[0]?.accountAddress)
+      return { props: {}, notFound: true };
 
     return {
       props: {
-        address,
+        address: users[0]?.accountAddress,
         avatarUrl,
         name,
         fname: fname as string,
