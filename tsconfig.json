@@ -28,6 +28,6 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs"
-  ],
+, "src/utils/getActionsAndCalculate.ts"  ],
   "exclude": ["node_modules"]
 }

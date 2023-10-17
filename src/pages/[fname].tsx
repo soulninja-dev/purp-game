@@ -5,13 +5,47 @@ import Image from "next/image";
 import type { GetServerSideProps } from "next";
 import { useState } from "react";
 import Cast from "~/components/Cast";
+import UploadIcon from "~/components/icons/Upload";
+import DownloadIcon from "~/components/icons/Download";
+import CopyIcon from "~/components/icons/Copy";
+import { getUserAddress, getUserData } from "~/utils/getActionsAndCalculate";
 import { useRouter } from "next/router";
+import { fnames } from "~/utils/fnames";
 
-const Profile = () => {
+const Profile = ({
+  address,
+  avatarUrl,
+  name,
+  fname,
+  pointsSent,
+  pointsEarned,
+}: {
+  notFound: boolean;
+  address: string;
+  avatarUrl: string;
+  name: string;
+  fname: string;
+  pointsSent: number;
+  pointsEarned: number;
+}) => {
   const [tab, setTab] = useState<"recasts" | "likes">("recasts");
-
   const router = useRouter();
 
+  const formatAddress = (address: string) =>
+    address && address.length >= 10
+      ? `${address.slice(0, 6)}....${address.slice(-5)}`
+      : address;
+  const copyToClipboard: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+    navigator.clipboard
+      .writeText(address)
+      .then(() => {
+        console.log("done");
+      })
+      .catch(() => {
+        console.log("couldnt copy to clipboard");
+      });
+  };
   return (
     <>
       <Head>
@@ -29,16 +63,13 @@ const Profile = () => {
           </button>
           <div className="flex flex-col gap-1">
             <Image
-              src={
-                "https://cdn.discordapp.com/attachments/856193656569462824/1160958256143945870/image.png?ex=65368da1&is=652418a1&hm=9d4db77a6852250c0d042ba9ac38ef94fc19ec92fa16fb6602f059117ea16dd9&"
-              }
-              className="h-[52px] w-[52px] rounded-full"
+              src={avatarUrl}
+              className="h-[76px] w-[76px] rounded-full"
               alt="avatar"
-              width={52}
-              height={52}
+              width={76}
+              height={76}
             />
-            <div className="flex items-center gap-1 text-lg font-semibold text-gray-100">
-              elonmusk
+            <div className="flex items-center gap-1 text-lg text-gray-50">
               <Image
                 src="https://cdn.discordapp.com/attachments/856193656569462824/1155751897869860895/image.png"
                 className="h-5 w-5"
@@ -46,9 +77,51 @@ const Profile = () => {
                 width={20}
                 height={20}
               />
+              {name}
             </div>
-            <div className="text-gray-200">@elonmusk</div>
-            <div className="text-gray-200">🌿Plant dad ,🏗 builder @tesla</div>
+            <div className="text-gray-600">{fname}</div>
+          </div>
+          <div className="flex flex-col items-center gap-7 rounded-2xl border-[0.5px] border-gray-800 bg-gray-950 px-4 py-6 text-center">
+            <div className="flex flex-col gap-3">
+              <div className="uppercase text-gray-700">Total Balance</div>
+              <div className="text-4xl font-bold text-gray-100">$...</div>
+            </div>
+            <div className="flex items-center gap-1 rounded-[9px] border-[0.5px] border-[#2c2d2e] bg-[#1d1d20] p-2 text-sm text-gray-700">
+              <div>{formatAddress(address)}</div>
+              <div onClick={copyToClipboard} className="cursor-pointer ">
+                <CopyIcon />
+              </div>
+            </div>
+            <div className="flex w-full justify-between gap-2">
+              <button className="flex w-full items-center justify-center gap-1 rounded-lg bg-[#2A2042] p-2 text-farcaster-500">
+                <UploadIcon />
+                Send
+              </button>
+              <button className="flex w-full items-center justify-center gap-1 rounded-lg bg-[#2A2042] p-2 text-farcaster-500">
+                <DownloadIcon />
+                Move to Bank
+              </button>
+            </div>
+          </div>
+          <div className="flex items-center justify-between text-gray-800">
+            <div className="items-cent flex gap-2 text-xl text-gray-300">
+              <div className="flex items-center gap-1 text-lg text-gray-600">
+                <Image src="/usdc.png" alt="usdc logo" width={24} height={24} />
+                USDC
+              </div>
+              5
+            </div>
+            ~5.00$
+          </div>
+          <div className="flex justify-between text-gray-100">
+            <div className="flex flex-col gap-2.5">
+              <div>Earned rewards</div>
+              <div className="text-gray-600">🟣 {pointsEarned}</div>
+            </div>
+            <div className="flex flex-col gap-2.5">
+              <div>Gifted rewards</div>
+              <div className="text-gray-600">🟣 {pointsSent}</div>
+            </div>
           </div>
           <div className="relative flex items-center gap-10 border-b border-gray-900 ">
             <button
@@ -120,16 +193,41 @@ const Profile = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  // @soulninja-dev implement user exists or not logic here
-  // docs for getServerSideProps:
-  // https://nextjs.org/docs/pages/building-your-application/data-fetching/get-server-side-props#using-getserversideprops-to-fetch-data-at-request-time
-
-  if (ctx.query.fname !== "corbin.eth") return { notFound: true, props: {} };
-
-  return {
-    props: {},
-  };
-};
-
 export default Profile;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { fname } = ctx.query;
+
+  if (!fname || !fnames.includes(fname as string))
+    return { props: {}, notFound: true };
+
+  // get user address
+  try {
+    const {
+      users: [{ accountAddress: address }],
+    } = await getUserAddress(fname as string);
+
+    // get user data
+    const { name, avatarUrl, pointsSent, pointsEarned } = await getUserData(
+      fname as string,
+    );
+
+    if (!name || !avatarUrl || !address) return { props: {}, notFound: true };
+
+    return {
+      props: {
+        address,
+        avatarUrl,
+        name,
+        fname: fname as string,
+        pointsSent,
+        pointsEarned,
+      },
+    };
+  } catch (err) {
+    return {
+      props: {},
+      notFound: true,
+    };
+  }
+};
