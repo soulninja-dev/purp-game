@@ -5,22 +5,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import _ from "lodash";
 import { createClient } from "@supabase/supabase-js";
+import { fnames } from "./fnames";
+const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
+import { env } from "~/env.mjs";
 
 export async function getActionsAndCalculate() {
-  const stripeSubs: string[] = ["jamesyoung", "agostbiro.eth", "j4ck.eth"];
-  const superfluidSubs: string[] = [
-    "ayushm.eth",
-    "0xen",
-    "limes.eth",
-    "lay2000lbs",
-    "corbin.eth",
-    "thumbsup.eth",
-    "tayyab",
-    "ispeaknerd.eth",
-    "kmacb.eth",
-    "woj.eth",
-  ];
-  const fnames: string[] = _.concat(stripeSubs, superfluidSubs);
   const date = new Date().toISOString().slice(0, 10);
 
   const dailyUsdcAmt = 0.33;
@@ -100,7 +89,7 @@ async function getRecentReactionsfromFC(
   }
 }
 
-async function getUserAddress(fid: string): Promise<any> {
+export async function getUserAddress(fid: string): Promise<any> {
   const endpoint = `https://paymagicapi.com/v1/resolver`;
 
   const headers = {
@@ -127,6 +116,47 @@ async function getUserAddress(fid: string): Promise<any> {
     return await response.json();
   } catch (error) {
     console.error("Paymagic Resolver: Error calling resolver", error);
+    throw error;
+  }
+}
+
+export async function getUserData(fid: string): Promise<any> {
+  try {
+    let res = {};
+    const { data, error } = await supabase
+      .from("actions")
+      .select("senderDisplayName, senderAvatarUrl")
+      .eq("senderName", fid)
+      .limit(1);
+
+    if (error) {
+      throw error;
+    }
+
+    if (data.length < 1) {
+      const { data, error } = await supabase
+        .from("actions")
+        .select("recipientDisplayName, recipientAvatarUrl")
+        .eq("recipientName", fid)
+        .limit(1);
+
+      if (error) {
+        throw error;
+      }
+      res = {
+        name: data[0]?.recipientDisplayName,
+        avatarUrl: data[0]?.recipientAvatarUrl,
+      };
+    } else {
+      res = {
+        name: data[0]?.senderDisplayName,
+        avatarUrl: data[0]?.senderAvatarUrl,
+      };
+    }
+
+    return res;
+  } catch (error) {
+    console.error("Error calling API", error);
     throw error;
   }
 }
