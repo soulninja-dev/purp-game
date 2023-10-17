@@ -7,10 +7,10 @@ import UploadIcon from "~/components/icons/Upload";
 import DownloadIcon from "~/components/icons/Download";
 import CopyIcon from "~/components/icons/Copy";
 import { type GetServerSideProps } from "next";
-import { fnames } from "~/utils/fnames";
 import { getUserAddress, getUserData } from "~/utils/getActionsAndCalculate";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { fnames } from "~/utils/fnames";
 
 const Profile = ({
   notFound,
@@ -18,12 +18,16 @@ const Profile = ({
   avatarUrl,
   name,
   fname,
+  pointsSent,
+  pointsEarned,
 }: {
   notFound: boolean;
   address: string;
   avatarUrl: string;
   name: string;
   fname: string;
+  pointsSent: number;
+  pointsEarned: number;
 }) => {
   const router = useRouter();
 
@@ -116,11 +120,11 @@ const Profile = ({
           <div className="flex justify-between text-gray-100">
             <div className="flex flex-col gap-2.5">
               <div>Earned rewards</div>
-              <div className="text-gray-600">🟣17</div>
+              <div className="text-gray-600">🟣 {pointsEarned}</div>
             </div>
             <div className="flex flex-col gap-2.5">
               <div>Gifted rewards</div>
-              <div className="text-gray-600">🟣17</div>
+              <div className="text-gray-600">🟣 {pointsSent}</div>
             </div>
           </div>
         </main>
@@ -134,7 +138,7 @@ export default Profile;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { fname } = ctx.query;
-  if (!fname) {
+  if (!fname || !fnames.includes(fname as string)) {
     return {
       props: {
         notFound: true,
@@ -142,6 +146,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         avatarUrl: "",
         name: "",
         fname: "",
+        pointsSent: 0,
+        pointsEarned: 0,
       },
     };
   }
@@ -152,12 +158,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     } = await getUserAddress(fname as string);
 
     // get user data
-    const { name, avatarUrl } = await getUserData(fname as string);
-    console.log(name, avatarUrl);
+    const { name, avatarUrl, pointsSent, pointsEarned } = await getUserData(
+      fname as string,
+    );
 
     if (!name || !avatarUrl || !address) {
       throw new Error("user doesnt exist");
     }
+
     return {
       props: {
         notFound: false,
@@ -165,6 +173,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         avatarUrl,
         name,
         fname: fname as string,
+        pointsSent,
+        pointsEarned,
       },
     };
   } catch (err) {
@@ -175,6 +185,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         avatarUrl: "",
         name: "",
         fname: "",
+        pointsSent: 0,
+        pointsEarned: 0,
       },
     };
   }

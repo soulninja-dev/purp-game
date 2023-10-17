@@ -8,6 +8,7 @@ import { createClient } from "@supabase/supabase-js";
 import { fnames } from "./fnames";
 const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 import { env } from "~/env.mjs";
+import { LBUser } from "./types";
 
 export async function getActionsAndCalculate() {
   const date = new Date().toISOString().slice(0, 10);
@@ -120,39 +121,57 @@ export async function getUserAddress(fid: string): Promise<any> {
   }
 }
 
+const calculatePoints = async (fname: string, type: string) => {
+  const currentDate = new Date();
+  const p_end_day = currentDate.toISOString().split("T")[0];
+  const p_start_day = new Date("2023-01-01").toISOString().split("T")[0];
+  const calctype = `calc_${type}_leaderboard`;
+
+  const { data, error } = (await supabase.rpc(calctype, {
+    p_start_day,
+    p_end_day,
+  })) as {
+    data: LBUser[] | null;
+    error: unknown;
+  };
+
+  if (!data || error) {
+    return { points: null, error };
+  }
+
+  const user = data.find((item: LBUser) => item.username === fname);
+  const points = user ? user.points : 0;
+
+  return { points, error: null };
+};
+
 export async function getUserData(fid: string): Promise<any> {
   try {
-    let res = {};
     const { data, error } = await supabase
       .from("actions")
       .select("senderDisplayName, senderAvatarUrl")
       .eq("senderName", fid)
       .limit(1);
+    if (error) throw error;
 
-    if (error) {
-      throw error;
-    }
+    const { points: pointsSent, error: patronError } = await calculatePoints(
+      fid,
+      "patron",
+    );
+    if (patronError) throw patronError;
 
-    if (data.length < 1) {
-      const { data, error } = await supabase
-        .from("actions")
-        .select("recipientDisplayName, recipientAvatarUrl")
-        .eq("recipientName", fid)
-        .limit(1);
+    const { points: pointsEarned, error: earnerError } = await calculatePoints(
+      fid,
+      "recipient",
+    );
+    if (patronError) throw patronError;
 
-      if (error) {
-        throw error;
-      }
-      res = {
-        name: data[0]?.recipientDisplayName,
-        avatarUrl: data[0]?.recipientAvatarUrl,
-      };
-    } else {
-      res = {
-        name: data[0]?.senderDisplayName,
-        avatarUrl: data[0]?.senderAvatarUrl,
-      };
-    }
+    const res = {
+      name: data[0]?.senderDisplayName,
+      avatarUrl: data[0]?.senderAvatarUrl,
+      pointsSent,
+      pointsEarned,
+    };
 
     return res;
   } catch (error) {
