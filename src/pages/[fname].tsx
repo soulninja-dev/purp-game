@@ -9,7 +9,7 @@ import CopyIcon from "~/components/icons/Copy";
 import { getUserAddress, getUserData } from "~/utils/getActionsAndCalculate";
 import { useRouter } from "next/router";
 import { fnames } from "~/utils/fnames";
-import type { MouseEventHandler } from "react";
+import { useEffect, type MouseEventHandler } from "react";
 
 interface Props {
   address: string;
@@ -46,10 +46,16 @@ const Profile: NextPage<Props> = ({
         //
       });
   };
+
+  // have to do this cuz putting {fname} in <title> raises a weird warning
+  useEffect(() => {
+    document.title = `purp.game - ${fname}`;
+  }, []);
+
   return (
     <>
       <Head>
-        <title>purp.game - {fname}</title>
+        <title>purp.game - profile</title>
         <meta name="description" content="p2p creator rewards for farcaster" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -61,7 +67,7 @@ const Profile: NextPage<Props> = ({
           >
             Profile
           </button>
-          <div className="flex flex-col gap-1 items-center">
+          <div className="flex flex-col items-center gap-1">
             <Image
               src={avatarUrl}
               className="h-[76px] w-[76px] rounded-full"
