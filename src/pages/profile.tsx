@@ -50,10 +50,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   // docs for getServerSideProps:
   // https://nextjs.org/docs/pages/building-your-application/data-fetching/get-server-side-props#using-getserversideprops-to-fetch-data-at-request-time
 
-  if (ctx.query.fname !== "corbin.eth") return { notFound: true, props: {} };
+  // temporary
+  // if (ctx.query.fname !== "corbin.eth") return { notFound: true, props: {} };
 
   return {
     props: {},
+    notFound: true,
   };
 };
 
