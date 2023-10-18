@@ -146,7 +146,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   // get user address
   try {
-    const { users } = await getUserAddress(fname as string);
+    const { users } = await getUserAddress(fname as unknown as number);
 
     // get user data
     const { name, avatarUrl, pointsSent, pointsEarned } = await getUserData(
@@ -167,9 +167,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   } catch (err) {
-    return {
-      props: {},
-      notFound: true,
-    };
+    return { props: {}, notFound: true };
   }
 };
