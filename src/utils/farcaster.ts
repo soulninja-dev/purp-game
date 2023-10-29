@@ -1,13 +1,19 @@
 import { createClient } from "@supabase/supabase-js";
 import { fnames } from "./fnames";
-const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 import { env } from "~/env.mjs";
-import type {
-  ActionsData,
-  LBUser,
-  NeynarResponse,
-  PaymagicResponse,
+import {
+  type ChainId,
+  ChainIdForChainName,
+  type ActionsData,
+  type Address,
+  type AlchemyResponse,
+  type LBUser,
+  type NeynarResponse,
+  type PaymagicResponse,
 } from "./types";
+import { USDC } from "./constants";
+
+const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 
 export async function getActionsAndCalculate() {
   const date = new Date().toISOString().slice(0, 10);
@@ -94,7 +100,7 @@ async function getRecentReactionsfromFC(fname: string, day: string) {
   }
 }
 
-export async function getUserAddress(fid: number) {
+export async function getUserAddress(fid: string) {
   const endpoint = `https://paymagicapi.com/v1/resolver`;
 
   const headers = {
@@ -102,7 +108,7 @@ export async function getUserAddress(fid: number) {
   };
 
   const payload = {
-    userIds: `farcaster:${fid}`,
+    userIds: `farcaster:${fid}`
   };
 
   try {
@@ -149,7 +155,7 @@ const calculatePoints = async (fname: string, type: string) => {
   return { points, error: null };
 };
 
-export async function getUserData(fid: string) {
+export async function getUserData(fname: string) {
   try {
     const {
       data,
@@ -160,24 +166,26 @@ export async function getUserData(fid: string) {
     } = await supabase
       .from("actions")
       .select("senderDisplayName, senderAvatarUrl")
-      .eq("senderName", fid)
+      .eq("senderName", fname)
       .limit(1);
 
     if (error) throw error;
 
     const { points: pointsSent, error: patronError } = await calculatePoints(
-      fid,
+      fname,
       "patron",
     );
     if (patronError) throw patronError;
 
     const { points: pointsEarned, error: earnerError } = await calculatePoints(
-      fid,
+      fname,
       "recipient",
     );
 
     if (patronError) throw patronError;
     if (earnerError) throw earnerError;
+
+    console.log(data);
 
     const res = {
       name: data![0]?.senderDisplayName,
@@ -214,3 +222,34 @@ async function upsertAction(actionData: ActionsData) {
     throw error;
   }
 }
+
+export const getUsdcBalance = async (chainId: ChainId, address: Address) => {
+  const network = ChainIdForChainName[chainId]?.AlchemyChainNetwork;
+
+  if (network) {
+    const url = `https://${network}.g.alchemy.com/v2/${env.ALCHEMY_API_KEY}`;
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        method: "alchemy_getTokenBalances",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        params: [`${address}`, "erc20"],
+        id: 42,
+      }),
+      redirect: "follow",
+    });
+
+    const data: AlchemyResponse = (await res.json()) as AlchemyResponse;
+
+    const usdc = parseInt(
+      data.result.tokenBalances.filter((t) => parseInt(t?.tokenBalance) > 0)[0]!
+        .tokenBalance,
+    );
+    return usdc / USDC;
+  }
+
+  return null;
+};

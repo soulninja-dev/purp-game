@@ -22,9 +22,10 @@ export type LBUser = BaseLBUser & {
 };
 
 type Url = `${"https" | "http"}://${string}`;
-type DateTimeZ =
-  `${number}-${number}-${number}T${number}:${number}:${number}.${number}Z`;
-type DateTime = `${number}-${number}-${number}T${number}:${number}:${number}`;
+type BaseDateTime =
+  `${number}-${number}-${number}T${number}:${number}:${number}`;
+type DateTimeZ = `${BaseDateTime}.${number}Z`;
+type DateTime = `${BaseDateTime}:${number}`;
 
 export type Post = {
   content: string;
@@ -82,3 +83,50 @@ export type PaymagicResponse = {
     accountAddress: string;
   }[];
 };
+
+export type Address = `0x${string}`;
+
+export type AlchemyResponse = {
+  jsonrpc: string;
+  id: number;
+  result: {
+    address: string;
+    tokenBalances: {
+      contractAddress: string;
+      tokenBalance: string;
+    }[];
+  };
+};
+
+type Chain = Record<
+  number,
+  {
+    AlchemyChainNetwork: string;
+    CovalentChainName: string;
+  }
+>;
+
+export const ChainIdForChainName: Chain = {
+  1: {
+    AlchemyChainNetwork: "eth-mainnet",
+    CovalentChainName: "eth-mainnet",
+  },
+  137: {
+    AlchemyChainNetwork: "polygon-mainnet",
+    CovalentChainName: "matic-mainnet",
+  },
+  1101: {
+    AlchemyChainNetwork: "polygonzkevm-mainnet",
+    CovalentChainName: "polygon-zkevm-mainnet",
+  },
+  59140: {
+    AlchemyChainNetwork: "",
+    CovalentChainName: "linea-testnet",
+  },
+};
+
+const supportedChainIds = Object.keys(ChainIdForChainName).map((chainIdStr) =>
+  Number(chainIdStr),
+);
+
+export type ChainId = (typeof supportedChainIds)[number];

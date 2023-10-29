@@ -28,6 +28,6 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs"
-, "src/utils/getActionsAndCalculate.ts"  ],
+, "src/utils/farcaster.ts"  ],
   "exclude": ["node_modules"]
 }
