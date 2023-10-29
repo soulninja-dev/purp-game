@@ -6,7 +6,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import UploadIcon from "~/components/icons/Upload";
 import DownloadIcon from "~/components/icons/Download";
 import CopyIcon from "~/components/icons/Copy";
-import { getUserAddress, getUserData } from "~/utils/getActionsAndCalculate";
+import { getUsdcBalance, getUserAddress, getUserData } from "~/utils/farcaster";
 import { useRouter } from "next/router";
 import { fnames } from "~/utils/fnames";
 import { useEffect, type MouseEventHandler } from "react";
@@ -18,6 +18,7 @@ interface Props {
   fname: string;
   pointsSent: number;
   pointsEarned: number;
+  usdc: number;
 }
 
 const Profile: NextPage<Props> = ({
@@ -27,6 +28,7 @@ const Profile: NextPage<Props> = ({
   fname,
   pointsSent,
   pointsEarned,
+  usdc,
 }) => {
   const router = useRouter();
 
@@ -115,9 +117,9 @@ const Profile: NextPage<Props> = ({
                 <Image src="/usdc.png" alt="usdc logo" width={24} height={24} />
                 USDC
               </div>
-              5
+              {usdc}
             </div>
-            ~5.00$
+            ~{usdc}$
           </div>
           <div className="flex justify-between text-gray-100">
             <div className="flex flex-col gap-2.5">
@@ -146,9 +148,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   // get user address
   try {
-    const { users } = await getUserAddress(fname as unknown as number);
+    const { users } = await getUserAddress(fname as string);
 
-    // get user data
+    // get user data 
     const { name, avatarUrl, pointsSent, pointsEarned } = await getUserData(
       fname as string,
     );
@@ -164,9 +166,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         fname: fname as string,
         pointsSent,
         pointsEarned,
+        usdc: await getUsdcBalance(
+          1,
+          users[0]?.accountAddress as `0x${string}`,
+        ),
       },
     };
   } catch (err) {
+    console.error(err);
     return { props: {}, notFound: true };
   }
 };
