@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getActionsAndCalculate } from "~/utils/getActionsAndCalculate";
+import { getActionsAndCalculate } from "~/utils/farcaster";
 
 export const config = {
   runtime: "edge",
