@@ -17,15 +17,16 @@ const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 
 export async function getActionsAndCalculate() {
   const date = new Date().toISOString().slice(0, 10);
-
   const dailyUsdcAmt = 0.33;
 
   for (const fname of fnames) {
     try {
       const neynarResponse = await getRecentReactionsfromFC(fname, date);
-
+      if (neynarResponse.query_result == undefined) {
+        console.log("empty");
+        return;
+      }
       const actionsData = neynarResponse.query_result.data.rows || [];
-
       let dailyPurpTotal = 0;
 
       actionsData.forEach((action) => {
@@ -93,14 +94,15 @@ async function getRecentReactionsfromFC(fname: string, day: string) {
       throw new Error(`FC API returned an error: ${response.statusText}`);
     }
 
-    return (await response.json()) as NeynarResponse;
+    const data = (await response.json()) as NeynarResponse;
+    return data;
   } catch (error) {
     console.error("Error fetching recent reactions from FC:", error);
     throw error;
   }
 }
 
-export async function getUserAddress(fid: string) {
+export async function getUserAddress(fname: number) {
   const endpoint = `https://paymagicapi.com/v1/resolver`;
 
   const headers = {
@@ -108,7 +110,7 @@ export async function getUserAddress(fid: string) {
   };
 
   const payload = {
-    userIds: `farcaster:${fid}`
+    userIds: `farcaster:${fname}`,
   };
 
   try {
@@ -185,8 +187,6 @@ export async function getUserData(fname: string) {
     if (patronError) throw patronError;
     if (earnerError) throw earnerError;
 
-    console.log(data);
-
     const res = {
       name: data![0]?.senderDisplayName,
       avatarUrl: data![0]?.senderAvatarUrl,
@@ -215,7 +215,6 @@ async function upsertAction(actionData: ActionsData) {
     if (error) {
       throw new Error(`Supabase upsertAction Error: ${JSON.stringify(error)}`);
     }
-
     return data;
   } catch (error) {
     console.error("Supabase: Error upserting action", error);

@@ -38,7 +38,7 @@ export const actionsRouter = createTRPCRouter({
       try {
         const currentDate = new Date();
         const p_end_day = currentDate.toISOString().split("T")[0];
-        currentDate.setDate(currentDate.getDate() - 6);
+        currentDate.setDate(currentDate.getDate() - 30);
         const p_start_day = currentDate.toISOString().split("T")[0];
 
         const calctype = `calc_${input.lb_type}_leaderboard`;

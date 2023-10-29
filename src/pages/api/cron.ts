@@ -9,6 +9,7 @@ export const config = {
 export default async function handler() {
   try {
     await getActionsAndCalculate();
+    // await getTestAction();
     return new NextResponse("success", { status: 200 });
   } catch (err) {
     return new NextResponse("failure", { status: 500 });
