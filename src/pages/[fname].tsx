@@ -3,8 +3,8 @@ import DesktopWrapper from "~/components/DesktopWrapper";
 import Navbar from "~/components/Navbar";
 import Image from "next/image";
 import type { GetServerSideProps, NextPage } from "next";
-import UploadIcon from "~/components/icons/Upload";
-import DownloadIcon from "~/components/icons/Download";
+// import DownloadIcon from "~/components/icons/Download";
+// import UploadIcon from "~/components/icons/Upload";
 import CopyIcon from "~/components/icons/Copy";
 import { getUsdcBalance, getUserAddress, getUserData } from "~/utils/farcaster";
 import { useRouter } from "next/router";
@@ -42,10 +42,10 @@ const Profile: NextPage<Props> = ({
     navigator.clipboard
       .writeText(address)
       .then(() => {
-        //
+        console.log("copied address");
       })
       .catch(() => {
-        //
+        console.log("error while trying to copy");
       });
   };
 
@@ -92,7 +92,7 @@ const Profile: NextPage<Props> = ({
           <div className="flex flex-col items-center gap-7 rounded-2xl border-[0.5px] border-gray-800 bg-gray-950 px-4 py-6 text-center">
             <div className="flex flex-col gap-3">
               <div className="uppercase text-gray-700">Total Balance</div>
-              <div className="text-4xl font-bold text-gray-100">$...</div>
+              <div className="text-4xl font-bold text-gray-100">${usdc}</div>
             </div>
             <div className="flex items-center gap-1 rounded-[9px] border-[0.5px] border-[#2c2d2e] bg-[#1d1d20] p-2 text-sm text-gray-700">
               <div>{formatAddress(address)}</div>
@@ -100,7 +100,7 @@ const Profile: NextPage<Props> = ({
                 <CopyIcon />
               </div>
             </div>
-            <div className="flex w-full justify-between gap-2">
+            {/* <div className="flex w-full justify-between gap-2">
               <button className="flex w-full items-center justify-center gap-1 rounded-lg bg-[#2A2042] p-2 text-farcaster-500">
                 <UploadIcon />
                 Send
@@ -109,7 +109,7 @@ const Profile: NextPage<Props> = ({
                 <DownloadIcon />
                 Move to Bank
               </button>
-            </div>
+            </div> */}
           </div>
           <div className="flex items-center justify-between text-gray-800">
             <div className="items-cent flex gap-2 text-xl text-gray-300">
@@ -146,17 +146,16 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (!fname || !fnames.includes(fname as string))
     return { props: {}, notFound: true };
 
-  // get user address
   try {
-    const { users } = await getUserAddress(fname as string);
+    const { fid, name, avatarUrl, pointsSent, pointsEarned } =
+      await getUserData(fname as string);
 
-    // get user data
-    const { name, avatarUrl, pointsSent, pointsEarned } = await getUserData(
-      fname as string,
-    );
+    const { users } = await getUserAddress(fid as string | number);
 
-    if (!name || !avatarUrl || !users[0]?.accountAddress)
+    if (!name || !avatarUrl || !users[0]?.accountAddress) {
+      console.log("some data missing");
       return { props: {}, notFound: true };
+    }
 
     return {
       props: {
@@ -166,10 +165,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         fname: fname as string,
         pointsSent,
         pointsEarned,
-        usdc: await getUsdcBalance(
-          1,
-          users[0]?.accountAddress as `0x${string}`,
-        ),
+        usdc: await getUsdcBalance(users[0]?.accountAddress as `0x${string}`),
       },
     };
   } catch (err) {

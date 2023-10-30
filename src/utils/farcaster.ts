@@ -102,7 +102,7 @@ async function getRecentReactionsfromFC(fname: string, day: string) {
   }
 }
 
-export async function getUserAddress(fname: string) {
+export async function getUserAddress(fname: string | number) {
   const endpoint = `https://paymagicapi.com/v1/resolver`;
 
   const headers = {
@@ -126,7 +126,8 @@ export async function getUserAddress(fname: string) {
       );
     }
 
-    return (await response.json()) as PaymagicResponse;
+    const data = (await response.json()) as PaymagicResponse;
+    return data;
   } catch (error) {
     console.error("Paymagic Resolver: Error calling resolver", error);
     throw error;
@@ -163,11 +164,17 @@ export async function getUserData(fname: string) {
       data,
       error,
     }: {
-      data: { senderDisplayName: string; senderAvatarUrl: string }[] | null;
+      data:
+        | {
+            senderDisplayName: string;
+            senderAvatarUrl: string;
+            senderFid: string;
+          }[]
+        | null;
       error: unknown;
     } = await supabase
       .from("actions")
-      .select("senderDisplayName, senderAvatarUrl")
+      .select("senderDisplayName, senderAvatarUrl, senderFid")
       .eq("senderName", fname)
       .limit(1);
 
@@ -188,6 +195,7 @@ export async function getUserData(fname: string) {
     if (earnerError) throw earnerError;
 
     const res = {
+      fid: data![0]?.senderFid,
       name: data![0]?.senderDisplayName,
       avatarUrl: data![0]?.senderAvatarUrl,
       pointsSent,
@@ -222,33 +230,27 @@ async function upsertAction(actionData: ActionsData) {
   }
 }
 
-export const getUsdcBalance = async (chainId: ChainId, address: Address) => {
-  const network = ChainIdForChainName[chainId]?.AlchemyChainNetwork;
+export const getUsdcBalance = async (address: Address) => {
+  const tokenContractAddresses = ["0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"];
+  const url = `https://polygon-mainnet.g.alchemy.com/v2/${env.ALCHEMY_API_KEY}`;
+  const res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "alchemy_getTokenBalances",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      params: [`${address}`, tokenContractAddresses],
+    }),
+    redirect: "follow",
+  });
 
-  if (network) {
-    const url = `https://${network}.g.alchemy.com/v2/${env.ALCHEMY_API_KEY}`;
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "alchemy_getTokenBalances",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        params: [`${address}`, "erc20"],
-        id: 42,
-      }),
-      redirect: "follow",
-    });
+  const data: AlchemyResponse = (await res.json()) as AlchemyResponse;
 
-    const data: AlchemyResponse = (await res.json()) as AlchemyResponse;
-
-    const usdc = parseInt(
-      data.result.tokenBalances.filter((t) => parseInt(t?.tokenBalance) > 0)[0]!
-        .tokenBalance,
-    );
-    return usdc / USDC;
-  }
-
-  return null;
+  const usdc = parseInt(
+    data.result.tokenBalances.filter((t) => parseInt(t?.tokenBalance) > 0)[0]!
+      .tokenBalance,
+  );
+  return usdc / USDC;
 };
