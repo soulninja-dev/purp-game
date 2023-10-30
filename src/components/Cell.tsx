@@ -1,20 +1,16 @@
 import Image from "next/image";
-import { useRouter } from "next/router";
+import Link from "next/link";
+import type { Dispatch, SetStateAction } from "react";
 
 export interface CellProp {
   name: string;
   avatar: string;
   points: number;
   rank: number;
+  setLoader: Dispatch<SetStateAction<boolean>> | ((arg0: boolean) => void);
 }
 
-const Cell = ({ name, avatar, points, rank }: CellProp) => {
-  const router = useRouter();
-  const clickProfile = () => {
-    router.push(`/${name}`).catch(() => {
-      console.log("cudnt push to profile page");
-    });
-  };
+const Cell = ({ name, avatar, points, rank, setLoader }: CellProp) => {
   const medals = [
     <td className="pl-3" key="gold">
       <Image
@@ -46,7 +42,7 @@ const Cell = ({ name, avatar, points, rank }: CellProp) => {
   ];
 
   return (
-    <div onClick={clickProfile} className="cursor-pointer">
+    <Link href={`/${name}`} onClick={() => setLoader(true)}>
       <tr className="flex items-center gap-2 py-2">
         {medals[rank - 1] ?? <td className="pl-5 pr-2">{rank}</td>}
         <td className="flex flex-grow items-center gap-2">
@@ -70,7 +66,7 @@ const Cell = ({ name, avatar, points, rank }: CellProp) => {
         </td>
         <td className="whitespace-nowrap px-3">{points} 🟣</td>
       </tr>
-    </div>
+    </Link>
   );
 };
 
