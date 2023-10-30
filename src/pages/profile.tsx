@@ -2,7 +2,6 @@ import Head from "next/head";
 import DesktopWrapper from "~/components/DesktopWrapper";
 import Navbar from "~/components/Navbar";
 import Image from "next/image";
-import type { GetServerSideProps } from "next";
 
 const Profile = () => {
   return (
@@ -45,18 +44,18 @@ const Profile = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  // @soulninja-dev implement user exists or not logic here
-  // docs for getServerSideProps:
-  // https://nextjs.org/docs/pages/building-your-application/data-fetching/get-server-side-props#using-getserversideprops-to-fetch-data-at-request-time
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   // @soulninja-dev implement user exists or not logic here
+//   // docs for getServerSideProps:
+//   // https://nextjs.org/docs/pages/building-your-application/data-fetching/get-server-side-props#using-getserversideprops-to-fetch-data-at-request-time
 
-  // temporary
-  // if (ctx.query.fname !== "corbin.eth") return { notFound: true, props: {} };
+//   // temporary
+//   // if (ctx.query.fname !== "corbin.eth") return { notFound: true, props: {} };
 
-  return {
-    props: {},
-    notFound: true,
-  };
-};
+//   return {
+//     props: {},
+//     notFound: true,
+//   };
+// };
 
 export default Profile;

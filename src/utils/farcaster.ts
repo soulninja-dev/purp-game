@@ -50,7 +50,7 @@ export async function getActionsAndCalculate() {
             .split("T")[0];
 
           action_.recipientAddress =
-            (await getUserAddress(action.recipientFid)).users[0]
+            (await getUserAddress(action.recipientName)).users[0]
               ?.accountAddress ?? "0x";
 
           action_.usdcAmt =
@@ -102,7 +102,7 @@ async function getRecentReactionsfromFC(fname: string, day: string) {
   }
 }
 
-export async function getUserAddress(fname: number) {
+export async function getUserAddress(fname: string) {
   const endpoint = `https://paymagicapi.com/v1/resolver`;
 
   const headers = {

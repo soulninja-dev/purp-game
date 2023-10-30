@@ -52,7 +52,7 @@ const Profile: NextPage<Props> = ({
   // have to do this cuz putting {fname} in <title> raises a weird warning
   useEffect(() => {
     document.title = `purp.game - ${fname}`;
-  }, []);
+  }, [fname]);
 
   return (
     <>
@@ -150,7 +150,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
     const { users } = await getUserAddress(fname as string);
 
-    // get user data 
+    // get user data
     const { name, avatarUrl, pointsSent, pointsEarned } = await getUserData(
       fname as string,
     );

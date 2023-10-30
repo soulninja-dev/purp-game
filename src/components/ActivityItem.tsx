@@ -1,8 +1,7 @@
 import Image from "next/image";
 import { relativeTimeFrom } from "~/utils/utils";
-
 export interface ActionProps {
-  avatars: `https://${string}`[];
+  avatars: string[];
   by: string;
   to: string;
   action: string;
