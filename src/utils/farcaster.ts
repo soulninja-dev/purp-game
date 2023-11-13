@@ -211,9 +211,8 @@ export async function getUserData(fname: string) {
 
 async function upsertAction(actionData: ActionsData) {
   try {
-    const SUPABASE_URL = "https://ixyadahmfkomzjqwzwax.supabase.co";
-    const SUPABASE_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4eWFkYWhtZmtvbXpqcXd6d2F4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5NjQ0OTU2MiwiZXhwIjoyMDEyMDI1NTYyfQ.3Q4kwoXafKICeBLMT5ep-fOvgYJfogPcnD1bGs0itMA";
+    const SUPABASE_URL = env.SUPABASE_URL;
+    const SUPABASE_KEY = env.SUPABASE_KEY
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     delete actionData.usdcAmt;
